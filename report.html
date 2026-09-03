@@ -1,0 +1,130 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Ask the Fed - Retrieval Evaluation</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+         color: #16202E; font-size: 10.5pt; line-height: 1.5; margin: 0; }
+  h1 { font-size: 22pt; margin: 0 0 4pt; letter-spacing: -0.4pt; }
+  .sub { color: #5A6675; margin: 0 0 4pt; font-size: 11pt; }
+  .meta { color: #8A94A3; font-size: 8.5pt; margin: 0 0 18pt;
+          font-family: "SF Mono", Menlo, monospace; }
+  h2 { font-size: 12.5pt; margin: 20pt 0 7pt; padding-bottom: 4pt;
+       border-bottom: 1.5px solid #16202E; }
+  h3 { font-size: 10.5pt; margin: 14pt 0 5pt; }
+  p { margin: 0 0 8pt; max-width: 62em; }
+  table { border-collapse: collapse; width: 100%; margin: 8pt 0 10pt;
+          font-variant-numeric: tabular-nums; }
+  th, td { text-align: right; padding: 5pt 8pt; border-bottom: 0.5px solid #D6DEE8; }
+  th { font-size: 8pt; text-transform: uppercase; letter-spacing: 0.4pt;
+       color: #78879B; border-bottom: 1px solid #16202E; }
+  td.l, th.l { text-align: left; }
+  table.years { font-size: 7.5pt; }
+  table.years th, table.years td { padding: 4pt 2pt; }
+  table.years th.l, table.years td.l { padding-right: 8pt; white-space: nowrap; }
+  tr.headline td { font-weight: 700; background: #F2F5F9; }
+  td.bad { color: #A63D28; }
+  td.good { color: #2A6350; font-weight: 600; }
+  td.delta { color: #8A6A3B; font-size: 9.5pt; }
+  .callout { border-left: 3px solid #8A6A3B; background: #F7F3EB;
+             padding: 8pt 12pt; margin: 10pt 0; }
+  .caveat { border: 0.5px solid #D6DEE8; padding: 10pt 14pt; margin-top: 8pt; }
+  .caveat li { margin-bottom: 6pt; }
+  ul { margin: 0; padding-left: 16pt; }
+  .small { font-size: 9pt; color: #5A6675; }
+  footer { margin-top: 16pt; padding-top: 6pt; border-top: 0.5px solid #D6DEE8;
+           font-size: 8pt; color: #8A94A3; font-family: "SF Mono", Menlo, monospace; }
+</style></head><body>
+
+<h1>Ask the Fed</h1>
+<p class="sub">Retrieval evaluation over FOMC minutes and statements</p>
+<p class="meta">Generated 2026-09-03 &middot; 10,952 passages &middot;
+142 meetings &middot; 2009-01-28 to 2026-07-29</p>
+
+<h2>What was measured</h2>
+<p>FOMC minutes are formulaic: the same sections say nearly the same things,
+meeting after meeting, for years. Semantic search alone therefore returns the
+right sentence from the wrong year, and that is the dominant failure mode of
+this corpus.</p>
+<p>The system's defence is to parse the constraints a question already states -
+its period, and the document it names - and apply them in SQL <em>before</em>
+the vector search runs. The table below is the same 22 questions run
+twice against the same store: once searching everything, once narrowing first.</p>
+
+<h2>Result</h2>
+<table>
+  <thead><tr><th class="l">Metric</th><th>Search everything</th>
+  <th>Narrow first</th><th>Change</th></tr></thead>
+  <tbody>
+      <tr class="headline">
+        <td class="l">Passages from the wrong meeting</td>
+        <td class="bad">72.2%</td>
+        <td class="good">3.5%</td>
+        <td class="delta">-68.7 pts</td>
+      </tr>
+      <tr>
+        <td class="l">Gold passage retrieved (recall@8)</td>
+        <td class="bad">86.4%</td>
+        <td class="good">100.0%</td>
+        <td class="delta">+13.6 pts</td>
+      </tr>
+      <tr>
+        <td class="l">Some passage from the right meeting</td>
+        <td class="bad">90.9%</td>
+        <td class="good">100.0%</td>
+        <td class="delta">+9.1 pts</td>
+      </tr>
+      <tr>
+        <td class="l">Mean reciprocal rank</td>
+        <td class="bad">0.441</td>
+        <td class="good">0.915</td>
+        <td class="delta">+0.474</td>
+      </tr>
+      <tr>
+        <td class="l">Chunks searched per question</td>
+        <td class="bad">10,952</td>
+        <td class="good">98</td>
+        <td class="delta">-10,854</td>
+      </tr></tbody>
+</table>
+<div class="callout"><strong>The first row is the finding.</strong> Without
+metadata filtering, 72.2% of retrieved passages
+come from a meeting other than the one asked about. Filtering first brings that
+to 3.5%.</div>
+
+<h3>Where the correct passage ranked (narrow first, k=8)</h3>
+<table><thead><tr><th class="l">Position</th><th>Questions</th></tr></thead>
+<tbody><tr><td class='l'>Ranked first</td><td>19</td></tr><tr><td class='l'>Ranked second</td><td>2</td></tr><tr><td class='l'>Ranked third</td><td>0</td></tr><tr><td class='l'>Rank 4 or worse</td><td>1</td></tr><tr><td class='l'>Not retrieved at all</td><td>0</td></tr></tbody></table>
+
+<h2>Corpus</h2>
+<table class="years"><thead><tr><th class="l">Year</th><td>2009</td><td>2010</td><td>2011</td><td>2012</td><td>2013</td><td>2014</td><td>2015</td><td>2016</td><td>2017</td><td>2018</td><td>2019</td><td>2020</td><td>2021</td><td>2022</td><td>2023</td><td>2024</td><td>2025</td><td>2026</td></tr></thead>
+<tbody><tr><td class="l">Meetings</td><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td><td>9</td><td>8</td><td>8</td><td>8</td><td>8</td><td>8</td><td>5</td></tr></tbody></table>
+<h3>Passages by section</h3>
+<table><thead><tr><th class="l">Section</th><th>Passages</th></tr></thead>
+<tbody><tr><td class='l'>Committee Policy Action</td><td>1,997</td></tr><tr><td class='l'>Participants&#x27; Views on Current Conditions and the Economic Outlook</td><td>1,775</td></tr><tr><td class='l'>Staff Review of the Financial Situation</td><td>1,605</td></tr><tr><td class='l'>Staff Review of the Economic Situation</td><td>1,289</td></tr><tr><td class='l'>Preamble</td><td>1,216</td></tr><tr><td class='l'>Policy Statement</td><td>790</td></tr><tr><td class='l'>Developments in Financial Markets and Open Market Operations</td><td>761</td></tr><tr><td class='l'>Annual Organizational Matters</td><td>474</td></tr></tbody></table>
+<p class="small">Documents: {&quot;minutes&quot;: 10162, &quot;statement&quot;: 790}. Every passage
+carries its meeting date and section, and the section label is what identifies
+whose view it is - the staff's, the participants', or the Committee's.</p>
+
+<h2>Limits of this evaluation</h2>
+<div class="caveat"><ul>
+<li><strong>The gold set covers 11 of 18 years.</strong>
+No pairs exist for 2009, 2010, 2011, 2012, 2013, 2014, 2015.
+This report therefore shows that expanding the corpus did not damage retrieval on
+the years it does cover - not that retrieval works on the years it does not.</li>
+<li><strong>Every gold question names its period.</strong> So this measures
+"when a question states a period, does filtering help?", not "does filtering help
+on arbitrary questions". Questions with no temporal cue fall back to searching
+the whole corpus and are unrepresented here.</li>
+<li><strong>22 pairs is a small sample.</strong> The direction is solid;
+the third decimal place is noise. Any change worth less than roughly two
+questions cannot be distinguished from chance at this size.</li>
+<li><strong>Answer generation is switched off</strong> and therefore untested.
+The domain rules it must follow - preserve Fed quantifiers verbatim, never
+attribute a staff forecast to the Committee - are enforced only by a prompt that
+has not been run.</li>
+</ul></div>
+
+<footer>Ask the Fed &middot; retrieval evaluation &middot; numbers produced by
+eval.py against fed.db at generation time</footer>
+</body></html>
