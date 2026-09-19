@@ -1,0 +1,25 @@
+# Secrets. Never commit these.
+.env
+
+# Cached corpus and derived stores. Rebuild with scrape.py / chunk.py / embed.py.
+# Patterns are deliberately broad: comparing two chunking schemes means building
+# fed.db/ctx.db/w3.db side by side, and naming each one here is how 50MB of
+# vectors ends up committed by a `git add -A`.
+data/raw/
+data/chunks*.jsonl
+*.db
+*.npy
+
+# Scratch
+scratch/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+data/query_vectors.npz
+report.html
+report.pdf
+
+# Machine-specific runtime pointer; exported answers
+.runtime-python
+answers/

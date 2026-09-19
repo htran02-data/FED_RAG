@@ -1,0 +1,14 @@
+#!/bin/sh
+# Resolve the application without changing the caller's working directory.
+ROOT=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+if [ -n "$FEDRAG_PYTHON" ]; then
+    PYTHON=$FEDRAG_PYTHON
+elif [ -x "$ROOT/.venv/bin/python" ]; then
+    PYTHON="$ROOT/.venv/bin/python"
+elif [ -f "$ROOT/.runtime-python" ]; then
+    IFS= read -r PYTHON < "$ROOT/.runtime-python"
+else
+    PYTHON=python3
+fi
+export PYTHONPATH="$ROOT${PYTHONPATH:+:$PYTHONPATH}"
+exec "$PYTHON" -m fedrag "$@"
